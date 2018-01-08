@@ -1,72 +1,93 @@
 <?php
 /**
- * The template for displaying comments
+ * The template for displaying Comments.
  *
- * This is the template that displays the area of the page that contains both the current comments
- * and the comment form.
- *
- * @link https://developer.wordpress.org/themes/basics/template-hierarchy/
- *
- * @package Cat_Boxing
+ * @package ThinkUpThemes
  */
-
-/*
- * If the current post is protected by a password and
- * the visitor has not yet entered the password we will
- * return early without loading the comments.
- */
-if ( post_password_required() ) {
-	return;
-}
 ?>
 
-<div id="comments" class="comments-area">
+<?php
+	/* Exit if the post is password protected & user is not logged in */
+	if ( post_password_required() )
+		return;
+?>
+
+	<div id="comments">
+	<div id="comments-core" class="comments-area">
+
+	<?php if ( have_comments() ) : ?>
+
+		<div id="comments-title">
+			<h3>
+				<?php
+					printf( _n( 'Comments <span>(1)</span> ', 'Comments <span>(%1$s)</span>', get_comments_number(), 'renden' ),
+						number_format_i18n( get_comments_number() ) );
+				?>
+			</h3>
+			<span class="sep"><span class="sep-core"></span></span>
+		</div>
+
+		<?php if ( get_comment_pages_count() > 1 && get_option( 'page_comments' ) ) : ?>
+		<nav role="navigation" id="comment-nav-above" class="comment-navigation">
+			<div class="nav-previous"><?php previous_comments_link( __( 'Older Comments', 'renden' ) ); ?></div>
+			<div class="nav-next"><?php next_comments_link( __( 'Newer Comments', 'renden' ) ); ?></div>
+			<div class="clearboth"></div>			
+		</nav><!-- #comment-nav-before .comment-navigation -->
+		<?php endif;?>
+
+			<ol class="commentlist">
+				<?php /* List Comments */ thinkup_input_comments(); ?>
+			</ol><!-- .commentlist -->
+
+		<?php if ( get_comment_pages_count() > 1 && get_option( 'page_comments' ) ) : ?>
+		<nav role="navigation" id="comment-nav-below" class="comment-navigation">
+			<div class="nav-previous"><?php previous_comments_link( __( 'Older Comments', 'renden' ) ); ?></div>
+			<div class="nav-next"><?php next_comments_link( __( 'Newer Comments', 'renden' ) ); ?></div>
+			<div class="clearboth"></div>
+		</nav><!-- #comment-nav-below .comment-navigation -->
+		<?php endif; ?>
+
+	<?php endif; ?>
 
 	<?php
-	// You can start editing here -- including this comment!
-	if ( have_comments() ) : ?>
-		<h2 class="comments-title">
-			<?php
-			$comment_count = get_comments_number();
-			if ( 1 === $comment_count ) {
-				printf(
-					/* translators: 1: title. */
-					esc_html_e( 'One thought on &ldquo;%1$s&rdquo;', 'cat-boxing' ),
-					'<span>' . get_the_title() . '</span>'
-				);
-			} else {
-				printf( // WPCS: XSS OK.
-					/* translators: 1: comment count number, 2: title. */
-					esc_html( _nx( '%1$s thought on &ldquo;%2$s&rdquo;', '%1$s thoughts on &ldquo;%2$s&rdquo;', $comment_count, 'comments title', 'cat-boxing' ) ),
-					number_format_i18n( $comment_count ),
-					'<span>' . get_the_title() . '</span>'
-				);
-			}
-			?>
-		</h2><!-- .comments-title -->
-
-		<?php the_comments_navigation(); ?>
-
-		<ol class="comment-list">
-			<?php
-				wp_list_comments( array(
-					'style'      => 'ol',
-					'short_ping' => true,
-				) );
-			?>
-		</ol><!-- .comment-list -->
-
-		<?php the_comments_navigation();
-
-		// If comments are closed and there are comments, let's leave a little note, shall we?
-		if ( ! comments_open() ) : ?>
-			<p class="no-comments"><?php esc_html_e( 'Comments are closed.', 'cat-boxing' ); ?></p>
-		<?php
-		endif;
-
-	endif; // Check for have_comments().
-
-	comment_form();
+		/* Message to display when comments are closed */
+		if ( ! comments_open() && '0' != get_comments_number() && post_type_supports( get_post_type(), 'comments' ) ) :
 	?>
 
-</div><!-- #comments -->
+		<div id="nocomments" class="notification info">
+			<div class="icon"><?php _e( 'Comments are closed.', 'renden' ); ?></div>
+		</div>
+
+	<?php endif; ?>
+
+	<?php 
+		$req      = get_option( 'require_name_email' );
+		$aria_req = ( $req ? " aria-required='true'" : '' );
+
+		$comments_args = array(
+			'label_submit' => __( 'Submit Now', 'renden' ),
+			'title_reply'  => __( 'Leave a comment', 'renden'  ),
+			'comment_notes_after' => '',
+			'comment_field' =>  
+				'<p class="comment-form-comment">' .
+				'<textarea id="comment" name="comment" placeholder="' . esc_attr__( 'Your Message', 'renden' ) . '" cols="45" rows="8" aria-required="true">' .
+				'</textarea></p>',
+			'fields' => apply_filters( 'comment_form_default_fields', array (
+				'author' =>
+					'<p class="comment-form-author one_third">' .
+					'<input id="author" name="author" placeholder="' . esc_attr__( 'Your Name (Required)', 'renden' ) . '" type="text" value="' . esc_attr( $commenter['comment_author'] ) .
+					'" size="30" /></p>',
+				'email' =>
+					'<p class="comment-form-email one_third">' .
+					'<input id="email" name="email" placeholder="' . esc_attr__( 'Your Email (Required)', 'renden' ) . '" type="text" value="' . esc_attr(  $commenter['comment_author_email'] ) .
+					'" size="30" /></p>',
+				'url' =>
+					'<p class="comment-form-url one_third last">' .
+					'<input id="url" name="url" placeholder="' . esc_attr__( 'Your Website', 'renden' ). '" type="text" value="' . esc_attr( $commenter['comment_author_url'] ) .
+					'" size="30" /></p>'
+			) ),
+		);
+		comment_form( $comments_args );
+	?>
+</div>
+</div><div class="clearboth"></div><!-- #comments .comments-area -->

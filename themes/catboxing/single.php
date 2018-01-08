@@ -1,35 +1,24 @@
 <?php
 /**
- * The template for displaying all single posts
+ * The Template for displaying all single posts.
  *
- * @link https://developer.wordpress.org/themes/basics/template-hierarchy/#single-post
- *
- * @package Cat_Boxing
+ * @package ThinkUpThemes
  */
 
 get_header(); ?>
 
-	<div id="primary" class="content-area">
-		<main id="main" class="site-main">
+			<?php while ( have_posts() ) : the_post(); ?>
 
-		<?php
-		while ( have_posts() ) : the_post();
+				<?php get_template_part( 'content', 'single' ); ?>
 
-			get_template_part( 'template-parts/content', get_post_type() );
+				<?php wp_link_pages( array( 'before' => '<div class="page-links">' . __( 'Pages:', 'renden' ), 'after'  => '</div>', ) ); ?>
 
-			the_post_navigation();
+				<?php thinkup_input_nav( 'nav-below' ); ?>
 
-			// If comments are open or we have at least one comment, load up the comment template.
-			if ( comments_open() || get_comments_number() ) :
-				comments_template();
-			endif;
+				<?php /* Add Social Share */  thinkup_input_share(); ?>
 
-		endwhile; // End of the loop.
-		?>
+				<?php /* Add comments */ thinkup_input_allowcomments(); ?>
 
-		</main><!-- #main -->
-	</div><!-- #primary -->
+			<?php endwhile; wp_reset_query(); ?>
 
-<?php
-get_sidebar();
-get_footer();
+<?php get_footer(); ?>

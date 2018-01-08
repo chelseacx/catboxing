@@ -1,158 +1,278 @@
 <?php
 /**
- * Cat Boxing functions and definitions
+ * Setup theme functions for Engrave.
  *
- * @link https://developer.wordpress.org/themes/basics/theme-functions/
- *
- * @package Cat_Boxing
+ * @package ThinkUpThemes
  */
 
-if ( ! function_exists( 'cat_boxing_setup' ) ) :
-	/**
-	 * Sets up theme defaults and registers support for various WordPress features.
-	 *
-	 * Note that this function is hooked into the after_setup_theme hook, which
-	 * runs before the init hook. The init hook is too late for some features, such
-	 * as indicating support for post thumbnails.
-	 */
-	function cat_boxing_setup() {
-		/*
-		 * Make theme available for translation.
-		 * Translations can be filed in the /languages/ directory.
-		 * If you're building a theme based on Cat Boxing, use a find and replace
-		 * to change 'cat-boxing' to the name of your theme in all the template files.
-		 */
-		load_theme_textdomain( 'cat-boxing', get_template_directory() . '/languages' );
+// Declare latest theme version
+$GLOBALS['thinkup_theme_version'] = '1.3.18';
 
-		// Add default posts and comments RSS feed links to head.
+// Setup content width 
+function thinkup_content_width() {
+	$GLOBALS['content_width'] = apply_filters( 'thinkup_content_width', 990 );
+}
+add_action( 'after_setup_theme', 'thinkup_content_width', 0 );
+
+
+//----------------------------------------------------------------------------------
+//	Add Theme Options Panel & Assign Variable Values
+//----------------------------------------------------------------------------------
+
+	// Add Redux Framework
+	require_once( get_template_directory() . '/admin/main/framework.php' );
+	require_once( get_template_directory() . '/admin/main/options.php' );
+	require_once( get_template_directory() . '/admin/main-extensions/extensions-init.php' );
+
+	// Add Toolbox Framework
+	require_once( get_template_directory() . '/admin/main-toolbox/toolbox.php' );
+
+	// Load Theme Variables.
+	require_once( get_template_directory() . '/admin/main/options/00.variables.php' ); 
+
+	// Add Theme Options Features.
+	require_once( get_template_directory() . '/admin/main/options/00.theme-setup.php' ); 
+	require_once( get_template_directory() . '/admin/main/options/01.general-settings.php' ); 
+	require_once( get_template_directory() . '/admin/main/options/02.homepage.php' ); 
+	require_once( get_template_directory() . '/admin/main/options/03.header.php' ); 
+	require_once( get_template_directory() . '/admin/main/options/04.footer.php' );
+	require_once( get_template_directory() . '/admin/main/options/05.blog.php' ); 
+	require_once( get_template_directory() . '/admin/main/options/08.special-pages.php' ); 
+
+
+//----------------------------------------------------------------------------------
+//	Assign Theme Specific Functions
+//----------------------------------------------------------------------------------
+
+// Setup theme features, register menus and scripts.
+if ( ! function_exists( 'thinkup_themesetup' ) ) {
+
+	function thinkup_themesetup() {
+
+		// Load required files
+		require_once ( get_template_directory() . '/lib/functions/extras.php' );
+		require_once ( get_template_directory() . '/lib/functions/template-tags.php' );
+
+		// Make theme translation ready.
+		load_theme_textdomain( 'renden', get_template_directory() . '/languages' );
+
+		// Add default theme functions.
 		add_theme_support( 'automatic-feed-links' );
-
-		/*
-		 * Let WordPress manage the document title.
-		 * By adding theme support, we declare that this theme does not use a
-		 * hard-coded <title> tag in the document head, and expect WordPress to
-		 * provide it for us.
-		 */
+		add_theme_support( 'post-thumbnails' );
+		add_theme_support( 'post-formats', array( 'gallery', 'image', 'video', 'audio', 'status', 'quote', 'link', 'chat' ) );
 		add_theme_support( 'title-tag' );
 
-		/*
-		 * Enable support for Post Thumbnails on posts and pages.
-		 *
-		 * @link https://developer.wordpress.org/themes/functionality/featured-images-post-thumbnails/
-		 */
-		add_theme_support( 'post-thumbnails' );
+		// Add support for custom background
+		add_theme_support( 'custom-background' );
 
-		// This theme uses wp_nav_menu() in one location.
-		register_nav_menus( array(
-			'menu-1' => esc_html__( 'Primary', 'cat-boxing' ),
-		) );
+		// Add support for custom header
+		$args = apply_filters( 'custom-header', array( 'height' => 200, 'width'  => 1600 ) );
+		add_theme_support( 'custom-header', $args );
 
-		/*
-		 * Switch default core markup for search form, comment form, and comments
-		 * to output valid HTML5.
-		 */
-		add_theme_support( 'html5', array(
-			'search-form',
-			'comment-form',
-			'comment-list',
-			'gallery',
-			'caption',
-		) );
+		// Add WooCommerce functions.
+		add_theme_support( 'woocommerce' );
+		add_theme_support( 'wc-product-gallery-zoom' );
+		add_theme_support( 'wc-product-gallery-lightbox' );
+		add_theme_support( 'wc-product-gallery-slider' );
 
-		// Set up the WordPress core custom background feature.
-		add_theme_support( 'custom-background', apply_filters( 'cat_boxing_custom_background_args', array(
-			'default-color' => 'ffffff',
-			'default-image' => '',
-		) ) );
-
-		// Add theme support for selective refresh for widgets.
-		add_theme_support( 'customize-selective-refresh-widgets' );
-
-		/**
-		 * Add support for core custom logo.
-		 *
-		 * @link https://codex.wordpress.org/Theme_Logo
-		 */
-		add_theme_support( 'custom-logo', array(
-			'height'      => 250,
-			'width'       => 250,
-			'flex-width'  => true,
-			'flex-height' => true,
-		) );
+		// Register theme menu's.
+		register_nav_menus( array( 'pre_header_menu' => __( 'Pre Header Menu', 'renden' ) ) );
+		register_nav_menus( array( 'header_menu'     => __( 'Primary Header Menu', 'renden' ) ) );
+		register_nav_menus( array( 'sub_footer_menu' => __( 'Footer Menu', 'renden' ) ) );
 	}
-endif;
-add_action( 'after_setup_theme', 'cat_boxing_setup' );
-
-/**
- * Set the content width in pixels, based on the theme's design and stylesheet.
- *
- * Priority 0 to make it available to lower priority callbacks.
- *
- * @global int $content_width
- */
-function cat_boxing_content_width() {
-	$GLOBALS['content_width'] = apply_filters( 'cat_boxing_content_width', 640 );
 }
-add_action( 'after_setup_theme', 'cat_boxing_content_width', 0 );
+add_action( 'after_setup_theme', 'thinkup_themesetup' );
 
-/**
- * Register widget area.
- *
- * @link https://developer.wordpress.org/themes/functionality/sidebars/#registering-a-sidebar
- */
-function cat_boxing_widgets_init() {
-	register_sidebar( array(
-		'name'          => esc_html__( 'Sidebar', 'cat-boxing' ),
-		'id'            => 'sidebar-1',
-		'description'   => esc_html__( 'Add widgets here.', 'cat-boxing' ),
-		'before_widget' => '<section id="%1$s" class="widget %2$s">',
-		'after_widget'  => '</section>',
-		'before_title'  => '<h2 class="widget-title">',
-		'after_title'   => '</h2>',
-	) );
-}
-add_action( 'widgets_init', 'cat_boxing_widgets_init' );
 
-/**
- * Enqueue scripts and styles.
- */
-function cat_boxing_scripts() {
-	wp_enqueue_style( 'cat-boxing-style', get_stylesheet_uri() );
+//----------------------------------------------------------------------------------
+//	Register Front-End Styles And Scripts
+//----------------------------------------------------------------------------------
 
-	wp_enqueue_script( 'cat-boxing-navigation', get_template_directory_uri() . '/js/navigation.js', array(), '20151215', true );
+function thinkup_frontscripts() {
 
-	wp_enqueue_script( 'cat-boxing-skip-link-focus-fix', get_template_directory_uri() . '/js/skip-link-focus-fix.js', array(), '20151215', true );
+	global $thinkup_theme_version;
 
+	// Add 3rd party stylesheets
+	wp_enqueue_style( 'prettyPhoto', get_template_directory_uri() . '/lib/extentions/prettyPhoto/css/prettyPhoto.css', '', '3.1.6' );
+
+	// Add 3rd party stylesheets - Prefixed to prevent conflict between library versions
+	wp_enqueue_style( 'thinkup-bootstrap', get_template_directory_uri() . '/lib/extentions/bootstrap/css/bootstrap.min.css', '', '2.3.2' );
+
+	// Add 3rd party Font Packages
+	wp_enqueue_style( 'dashicons' );
+	wp_enqueue_style( 'font-awesome', get_template_directory_uri() . '/lib/extentions/font-awesome/css/font-awesome.min.css', '', '4.7.0' );
+
+	// Add 3rd party scripts
+	wp_enqueue_script( 'imagesloaded' );
+	wp_enqueue_script( 'prettyPhoto', ( get_template_directory_uri().'/lib/extentions/prettyPhoto/js/jquery.prettyPhoto.js' ), array( 'jquery' ), '3.1.6', 'true' );
+	wp_enqueue_script( 'modernizr', get_template_directory_uri() . '/lib/scripts/modernizr.js', array( 'jquery' ), '2.6.2', 'true'  );
+
+	// Add 3rd party scripts - Prefixed to prevent conflict between library versions
+	wp_enqueue_script( 'thinkup-bootstrap', get_template_directory_uri() . '/lib/extentions/bootstrap/js/bootstrap.js', array( 'jquery' ), '2.3.2', 'true' );
+
+	// Register 3rd party scripts
+	wp_register_script( 'retina', get_template_directory_uri() . '/lib/scripts/retina.js', array( 'jquery' ), '0.0.2', '', true );
+
+	// Add theme stylesheets
+	wp_enqueue_style( 'thinkup-shortcodes', get_template_directory_uri() . '/styles/style-shortcodes.css', '', $thinkup_theme_version );
+	wp_enqueue_style( 'thinkup-style', get_stylesheet_uri(), '', $thinkup_theme_version );
+
+	// Add theme scripts
+	wp_enqueue_script( 'thinkup-frontend', get_template_directory_uri() . '/lib/scripts/main-frontend.js', array( 'jquery' ), $thinkup_theme_version, 'true' );
+
+	// Register theme stylesheets
+	wp_register_style( 'thinkup-responsive', get_template_directory_uri() . '/styles/style-responsive.css', '', $thinkup_theme_version );
+	wp_register_style( 'thinkup-sidebarleft', get_template_directory_uri() . '/styles/layouts/thinkup-left-sidebar.css', '', $thinkup_theme_version );
+	wp_register_style( 'thinkup-sidebarright', get_template_directory_uri() . '/styles/layouts/thinkup-right-sidebar.css', '', $thinkup_theme_version );
+
+	// Register WooCommerce (theme specific) stylesheets
+
+	// Add Masonry script to all archive pages
+	if ( thinkup_check_isblog() or is_page_template( 'template-blog.php' ) or is_archive() ) {
+		wp_enqueue_script( 'jquery-masonry' );
+	}
+
+	// Add Portfolio styles & scripts
+
+	// Add ThinkUpSlider scripts
+	if ( is_front_page() ) {
+		wp_enqueue_script( 'responsiveslides', get_template_directory_uri() . '/lib/scripts/plugins/ResponsiveSlides/responsiveslides.min.js', array( 'jquery' ), '1.54', 'true' );
+		wp_enqueue_script( 'thinkup-responsiveslides', get_template_directory_uri() . '/lib/scripts/plugins/ResponsiveSlides/responsiveslides-call.js', array( 'jquery' ), $thinkup_theme_version, 'true' );
+	}
+
+	// Add comments reply script
 	if ( is_singular() && comments_open() && get_option( 'thread_comments' ) ) {
 		wp_enqueue_script( 'comment-reply' );
 	}
 }
-add_action( 'wp_enqueue_scripts', 'cat_boxing_scripts' );
+add_action( 'wp_enqueue_scripts', 'thinkup_frontscripts', 10 );
 
-/**
- * Implement the Custom Header feature.
- */
-require get_template_directory() . '/inc/custom-header.php';
 
-/**
- * Custom template tags for this theme.
- */
-require get_template_directory() . '/inc/template-tags.php';
+//----------------------------------------------------------------------------------
+//	Register Back-End Styles And Scripts
+//----------------------------------------------------------------------------------
 
-/**
- * Functions which enhance the theme by hooking into WordPress.
- */
-require get_template_directory() . '/inc/template-functions.php';
+function thinkup_adminscripts() {
 
-/**
- * Customizer additions.
- */
-require get_template_directory() . '/inc/customizer.php';
+//	if ( is_customize_preview() ) {
 
-/**
- * Load Jetpack compatibility file.
- */
-if ( defined( 'JETPACK__VERSION' ) ) {
-	require get_template_directory() . '/inc/jetpack.php';
+		global $thinkup_theme_version;
+
+		// Add theme stylesheets
+		wp_enqueue_style( 'thinkup-backend', get_template_directory_uri() . '/styles/backend/style-backend.css', '', $thinkup_theme_version );
+		wp_enqueue_style( 'font-awesome', get_template_directory_uri() . '/lib/extentions/font-awesome/css/font-awesome.min.css', '', '4.7.0' );
+		
+		// Add theme scripts
+		wp_enqueue_script( 'thinkup-backend', get_template_directory_uri() . '/lib/scripts/main-backend.js', array( 'jquery' ), $thinkup_theme_version );
+
+//	}
 }
+add_action( 'admin_enqueue_scripts', 'thinkup_adminscripts' );
 
+
+//----------------------------------------------------------------------------------
+//	Register Shortcodes Styles And Scripts
+//----------------------------------------------------------------------------------
+
+function thinkup_shortcodescripts() {
+
+	global $thinkup_theme_version;
+
+	// Add shortcode Scripts
+	wp_enqueue_script( 'responsiveslides', get_template_directory_uri() . '/lib/scripts/plugins/ResponsiveSlides/responsiveslides.min.js', array( 'jquery' ), '1.54', 'true' );
+	wp_enqueue_script( 'thinkup-responsiveslides', get_template_directory_uri() . '/lib/scripts/plugins/ResponsiveSlides/responsiveslides-call.js', array( 'jquery' ), $thinkup_theme_version, 'true' );
+}
+add_action( 'wp_enqueue_scripts', 'thinkup_shortcodescripts', 10 );
+
+
+//----------------------------------------------------------------------------------
+//	Register Theme Widgets
+//----------------------------------------------------------------------------------
+
+function thinkup_widgets_init() {
+
+	// Register default sidebar
+	register_sidebar( array(
+		'name' => 'Sidebar',
+		'id' => 'sidebar-1',
+		'before_widget' => '<aside class="widget %2$s">',
+		'after_widget' => '</aside>',
+		'before_title' => '<h3 class="widget-title">',
+		'after_title' => '</h3>',
+	) );
+
+	// Register footer sidebars
+    register_sidebar( array(
+        'name' => 'Footer Column 1',
+        'id' => 'footer-w1',
+        'before_widget' => '<aside class="widget %2$s">',
+        'after_widget' => '</aside>',
+        'before_title' => '<h3 class="footer-widget-title"><span>',
+        'after_title' => '</span></h3>',
+    ) );
+ 
+    register_sidebar( array(
+        'name' => 'Footer Column 2',
+        'id' => 'footer-w2',
+        'before_widget' => '<aside class="widget %2$s">',
+        'after_widget' => '</aside>',
+        'before_title' => '<h3 class="footer-widget-title"><span>',
+        'after_title' => '</span></h3>',
+    ) );
+
+    register_sidebar( array(
+        'name' => 'Footer Column 3',
+        'id' => 'footer-w3',
+        'before_widget' => '<aside class="widget %2$s">',
+        'after_widget' => '</aside>',
+        'before_title' => '<h3 class="footer-widget-title"><span>',
+        'after_title' => '</span></h3>',
+    ) );
+
+    register_sidebar( array(
+        'name' => 'Footer Column 4',
+        'id' => 'footer-w4',
+        'before_widget' => '<aside class="widget %2$s">',
+        'after_widget' => '</aside>',
+        'before_title' => '<h3 class="footer-widget-title"><span>',
+        'after_title' => '</span></h3>',
+    ) );
+
+    register_sidebar( array(
+        'name' => 'Footer Column 5',
+        'id' => 'footer-w5',
+        'before_widget' => '<aside class="widget %2$s">',
+        'after_widget' => '</aside>',
+        'before_title' => '<h3 class="footer-widget-title"><span>',
+        'after_title' => '</span></h3>',
+    ) );
+
+    register_sidebar( array(
+        'name' => 'Footer Column 6',
+        'id' => 'footer-w6',
+        'before_widget' => '<aside class="widget %2$s">',
+        'after_widget' => '</aside>',
+        'before_title' => '<h3 class="footer-widget-title"><span>',
+        'after_title' => '</span></h3>',
+    ) );
+
+	// Register sub-footer sidebars
+    register_sidebar( array(
+        'name' => 'Sub-Footer Column 1',
+        'id' => 'sub-footer-w1',
+        'before_widget' => '<aside class="widget %2$s">',
+        'after_widget' => '</aside>',
+        'before_title' => '<h3 class="sub-footer-widget-title"><span>',
+        'after_title' => '</span></h3>',
+    ) );
+
+    register_sidebar( array(
+        'name' => 'Sub-Footer Column 2',
+        'id' => 'sub-footer-w2',
+        'before_widget' => '<aside class="widget %2$s">',
+        'after_widget' => '</aside>',
+        'before_title' => '<h3 class="sub-footer-widget-title"><span>',
+        'after_title' => '</span></h3>',
+    ) );
+}
+add_action( 'widgets_init', 'thinkup_widgets_init' );

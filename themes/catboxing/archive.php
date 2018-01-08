@@ -1,51 +1,50 @@
 <?php
 /**
- * The template for displaying archive pages
+ * The template for displaying Archive pages.
  *
- * @link https://developer.wordpress.org/themes/basics/template-hierarchy/
- *
- * @package Cat_Boxing
+ * @package ThinkUpThemes
  */
 
 get_header(); ?>
 
-	<div id="primary" class="content-area">
-		<main id="main" class="site-main">
+			<?php if( have_posts() ): ?>
 
-		<?php
-		if ( have_posts() ) : ?>
+				<div id="container">
 
-			<header class="page-header">
-				<?php
-					the_archive_title( '<h1 class="page-title">', '</h1>' );
-					the_archive_description( '<div class="archive-description">', '</div>' );
-				?>
-			</header><!-- .page-header -->
+				<?php while( have_posts() ): the_post(); ?>
 
-			<?php
-			/* Start the Loop */
-			while ( have_posts() ) : the_post();
+					<div class="blog-grid element<?php echo thinkup_input_stylelayout(); ?>">
 
-				/*
-				 * Include the Post-Format-specific template for the content.
-				 * If you want to override this in a child theme, then include a file
-				 * called content-___.php (where ___ is the Post Format name) and that will be used instead.
-				 */
-				get_template_part( 'template-parts/content', get_post_format() );
+					<article id="post-<?php the_ID(); ?>" <?php post_class('blog-article'); ?>>
 
-			endwhile;
+						<header class="entry-header<?php thinkup_input_stylelayout_class1(); ?>">
 
-			the_posts_navigation();
+							<?php thinkup_input_blogimage(); ?>
 
-		else :
+						</header>
 
-			get_template_part( 'template-parts/content', 'none' );
+						<div class="entry-content<?php thinkup_input_stylelayout_class2(); ?><?php thinkup_input_blogcommentclass(); ?>">
 
-		endif; ?>
+							<?php thinkup_input_blogtitle(); ?>
+							<?php thinkup_input_blogmeta(); ?>
+							<?php thinkup_input_blogtext(); ?>
 
-		</main><!-- #main -->
-	</div><!-- #primary -->
+						</div><div class="clearboth"></div>
 
-<?php
-get_sidebar();
-get_footer();
+					</article><!-- #post-<?php get_the_ID(); ?> -->
+
+					</div>
+
+				<?php endwhile; ?>
+
+				</div><div class="clearboth"></div>
+
+				<?php thinkup_input_pagination(); ?>
+
+			<?php else: ?>
+
+				<?php get_template_part( 'no-results', 'archive' ); ?>		
+
+			<?php endif; wp_reset_query(); ?>
+
+<?php get_footer() ?>

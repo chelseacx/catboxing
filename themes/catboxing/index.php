@@ -1,56 +1,49 @@
 <?php
 /**
- * The main template file
+ * The main template file.
  *
- * This is the most generic template file in a WordPress theme
- * and one of the two required files for a theme (the other being style.css).
- * It is used to display a page when nothing more specific matches a query.
- * E.g., it puts together the home page when no home.php file exists.
- *
- * @link https://developer.wordpress.org/themes/basics/template-hierarchy/
- *
- * @package Cat_Boxing
  */
 
 get_header(); ?>
 
-	<div id="primary" class="content-area">
-		<main id="main" class="site-main">
+			<?php if( have_posts() ): ?>
 
-		<?php
-		if ( have_posts() ) :
+				<div id="container">
 
-			if ( is_home() && ! is_front_page() ) : ?>
-				<header>
-					<h1 class="page-title screen-reader-text"><?php single_post_title(); ?></h1>
-				</header>
+				<?php while( have_posts() ): the_post(); ?>
 
-			<?php
-			endif;
+					<div class="blog-grid element<?php echo thinkup_input_stylelayout(); ?>">
 
-			/* Start the Loop */
-			while ( have_posts() ) : the_post();
+					<article id="post-<?php the_ID(); ?>" <?php post_class('blog-article'); ?>>
 
-				/*
-				 * Include the Post-Format-specific template for the content.
-				 * If you want to override this in a child theme, then include a file
-				 * called content-___.php (where ___ is the Post Format name) and that will be used instead.
-				 */
-				get_template_part( 'template-parts/content', get_post_format() );
+						<header class="entry-header<?php thinkup_input_stylelayout_class1(); ?>">
 
-			endwhile;
+							<?php thinkup_input_blogimage(); ?>
 
-			the_posts_navigation();
+						</header>
 
-		else :
+						<div class="entry-content<?php thinkup_input_stylelayout_class2(); ?><?php thinkup_input_blogcommentclass(); ?>">
 
-			get_template_part( 'template-parts/content', 'none' );
+							<?php thinkup_input_blogtitle(); ?>
+							<?php thinkup_input_blogmeta(); ?>
+							<?php thinkup_input_blogtext(); ?>
 
-		endif; ?>
+						</div><div class="clearboth"></div>
 
-		</main><!-- #main -->
-	</div><!-- #primary -->
+					</article><!-- #post-<?php get_the_ID(); ?> -->
 
-<?php
-get_sidebar();
-get_footer();
+					</div>
+
+				<?php endwhile; ?>
+
+				</div><div class="clearboth"></div>
+
+				<?php thinkup_input_pagination(); ?>
+
+			<?php else: ?>
+
+				<?php get_template_part( 'no-results', 'archive' ); ?>		
+
+			<?php endif; wp_reset_query(); ?>
+
+<?php get_footer() ?>

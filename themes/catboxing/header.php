@@ -1,56 +1,93 @@
 <?php
 /**
- * The header for our theme
+ * The Header for our theme.
  *
- * This is the template that displays all of the <head> section and everything up until <div id="content">
+ * Displays all of the <head> section and everything up until id="main-core".
  *
- * @link https://developer.wordpress.org/themes/basics/template-files/#template-partials
- *
- * @package Cat_Boxing
+ * @package ThinkUpThemes
  */
+?><!DOCTYPE html>
 
-?>
-<!doctype html>
 <html <?php language_attributes(); ?>>
 <head>
-	<meta charset="<?php bloginfo( 'charset' ); ?>">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<link rel="profile" href="http://gmpg.org/xfn/11">
+<?php thinkup_hook_header(); ?>
+<meta charset="<?php bloginfo( 'charset' ); ?>" />
+<meta name="viewport" content="width=device-width" />
+<link rel="profile" href="//gmpg.org/xfn/11" />
+<link rel="pingback" href="<?php bloginfo( 'pingback_url' ); ?>" />
+<!--[if lt IE 9]>
+<script src="<?php echo get_template_directory_uri(); ?>/lib/scripts/html5.js" type="text/javascript"></script>
+<![endif]-->
 
-	<?php wp_head(); ?>
+<?php wp_head(); ?>
+
 </head>
 
 <body <?php body_class(); ?>>
-<div id="page" class="site">
-	<a class="skip-link screen-reader-text" href="#content"><?php esc_html_e( 'Skip to content', 'cat-boxing' ); ?></a>
+<div id="body-core" class="hfeed site">
 
-	<header id="masthead" class="site-header">
-		<div class="site-branding">
-			<?php
-			the_custom_logo();
-			if ( is_front_page() && is_home() ) : ?>
-				<h1 class="site-title"><a href="<?php echo esc_url( home_url( '/' ) ); ?>" rel="home"><?php bloginfo( 'name' ); ?></a></h1>
-			<?php else : ?>
-				<p class="site-title"><a href="<?php echo esc_url( home_url( '/' ) ); ?>" rel="home"><?php bloginfo( 'name' ); ?></a></p>
-			<?php
-			endif;
+	<header>
+	<div id="site-header">
 
-			$description = get_bloginfo( 'description', 'display' );
-			if ( $description || is_customize_preview() ) : ?>
-				<p class="site-description"><?php echo $description; /* WPCS: xss ok. */ ?></p>
-			<?php
-			endif; ?>
-		</div><!-- .site-branding -->
+		<?php if ( get_header_image() ) : ?>
+			<div class="custom-header"><img src="<?php header_image(); ?>" width="<?php echo get_custom_header()->width; ?>" height="<?php echo get_custom_header()->height; ?>" alt=""></div>
+		<?php endif; // End header image check. ?>
+	
+		<div id="pre-header">
+		<div class="wrap-safari">
+		<div id="pre-header-core" class="main-navigation">
+  
+			<?php if ( has_nav_menu( 'pre_header_menu' ) ) : ?>
+			<?php wp_nav_menu( array( 'container_class' => 'header-links', 'container_id' => 'pre-header-links-inner', 'theme_location' => 'pre_header_menu' ) ); ?>
+			<?php endif; ?>
 
-		<nav id="site-navigation" class="main-navigation">
-			<button class="menu-toggle" aria-controls="primary-menu" aria-expanded="false"><?php esc_html_e( 'Primary Menu', 'cat-boxing' ); ?></button>
-			<?php
-				wp_nav_menu( array(
-					'theme_location' => 'menu-1',
-					'menu_id'        => 'primary-menu',
-				) );
-			?>
-		</nav><!-- #site-navigation -->
-	</header><!-- #masthead -->
+			<?php /* Social Media Icons */ thinkup_input_socialmediaheader(); ?>
 
-	<div id="content" class="site-content">
+		</div>
+		</div>
+		</div>
+		<!-- #pre-header -->
+
+		<div id="header">
+		<div id="header-core">
+
+			<div id="logo">
+			<a rel="home" href="<?php echo esc_url( home_url( '/' ) ); ?>"><?php /* Custom Logo */ thinkup_custom_logo(); ?></a>
+			</div>
+
+			<div id="header-links" class="main-navigation">
+			<div id="header-links-inner" class="header-links">
+
+				<?php wp_nav_menu(array( 'container' => false, 'theme_location'  => 'header_menu' ) ); ?>
+				
+				<?php /* Header Search */ thinkup_input_headersearch(); ?>
+			</div>
+			</div>
+			<!-- #header-links .main-navigation -->
+
+			<?php /* Add responsive header menu */ thinkup_input_responsivehtml1(); ?>
+
+		</div>
+
+			<?php /* Add responsive header menu */ thinkup_input_responsivehtml2(); ?>
+			<?php /* Custom Slider */ thinkup_input_sliderhome(); ?>
+
+		</div>
+		<!-- #header -->
+
+		<?php /* Custom Intro - Below */ thinkup_custom_intro(); ?>
+
+	</div>
+
+
+	</header>
+	<!-- header -->
+
+	<?php /*  Call To Action - Intro */ thinkup_input_ctaintro(); ?>
+	<?php /*  Pre-Designed HomePage Content */ thinkup_input_homepagesection(); ?>
+
+	<div id="content">
+	<div id="content-core">
+
+		<div id="main">
+		<div id="main-core">

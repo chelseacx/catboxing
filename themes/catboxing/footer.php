@@ -1,32 +1,43 @@
 <?php
 /**
- * The template for displaying the footer
+ * The template for displaying the footer.
  *
- * Contains the closing of the #content div and all content after.
+ * Contains the closing of the id="main-core".
  *
- * @link https://developer.wordpress.org/themes/basics/template-files/#template-partials
- *
- * @package Cat_Boxing
+ * @package ThinkUpThemes
  */
-
 ?>
 
+		</div><!-- #main-core -->
+		</div><!-- #main -->
+		<?php /* Sidebar */ thinkup_sidebar_html(); ?>
+	</div>
 	</div><!-- #content -->
 
-	<footer id="colophon" class="site-footer">
-		<div class="site-info">
-			<a href="<?php echo esc_url( __( 'https://wordpress.org/', 'cat-boxing' ) ); ?>"><?php
-				/* translators: %s: CMS name, i.e. WordPress. */
-				printf( esc_html__( 'Proudly powered by %s', 'cat-boxing' ), 'WordPress' );
-			?></a>
-			<span class="sep"> | </span>
-			<?php
-				/* translators: 1: Theme name, 2: Theme author. */
-				printf( esc_html__( 'Theme: %1$s by %2$s.', 'cat-boxing' ), 'cat-boxing', '<a href="http://underscores.me/">Underscores.me</a>' );
-			?>
-		</div><!-- .site-info -->
-	</footer><!-- #colophon -->
-</div><!-- #page -->
+	<footer>
+		<?php /* Custom Footer Layout */ thinkup_input_footerlayout();
+		echo	'<!-- #footer -->';  ?>
+		
+		<div id="sub-footer">
+
+		<?php /* Custom Sub-Footer Layout */ thinkup_input_subfooterlayout(); ?>
+
+		<div id="sub-footer-core">
+
+			<?php if ( has_nav_menu( 'sub_footer_menu' ) ) : ?>
+			<?php wp_nav_menu( array( 'depth' => 1, 'container_class' => 'sub-footer-links', 'container_id' => 'footer-menu', 'theme_location' => 'sub_footer_menu' ) ); ?>
+			<?php endif; ?>
+			<!-- #footer-menu -->
+
+			<?php if ( ! has_nav_menu( 'sub_footer_menu' ) ) : ?>
+			<?php /* Social Media Icons */ thinkup_input_socialmediafooter(); ?>
+			<?php endif; ?>
+
+		</div>
+		</div>
+	</footer><!-- footer -->
+
+</div><!-- #body-core -->
 
 <?php wp_footer(); ?>
 

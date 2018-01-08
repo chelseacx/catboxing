@@ -1,51 +1,26 @@
 <?php
 /**
- * The template for displaying search results pages
+ * The template for displaying Search Results pages.
  *
- * @link https://developer.wordpress.org/themes/basics/template-hierarchy/#search-result
- *
- * @package Cat_Boxing
+ * @package ThinkUpThemes
  */
 
 get_header(); ?>
 
-	<section id="primary" class="content-area">
-		<main id="main" class="site-main">
+			<?php if ( have_posts() ) : ?>
 
-		<?php
-		if ( have_posts() ) : ?>
+				<?php while ( have_posts() ) : the_post(); ?>
 
-			<header class="page-header">
-				<h1 class="page-title"><?php
-					/* translators: %s: search query. */
-					printf( esc_html__( 'Search Results for: %s', 'cat-boxing' ), '<span>' . get_search_query() . '</span>' );
-				?></h1>
-			</header><!-- .page-header -->
+					<?php get_template_part( 'content', 'search' ); ?>
 
-			<?php
-			/* Start the Loop */
-			while ( have_posts() ) : the_post();
+				<?php endwhile; ?>
 
-				/**
-				 * Run the loop for the search to output the results.
-				 * If you want to overload this in a child theme then include a file
-				 * called content-search.php and that will be used instead.
-				 */
-				get_template_part( 'template-parts/content', 'search' );
+				<?php thinkup_input_pagination(); ?>
 
-			endwhile;
+			<?php else : ?>
 
-			the_posts_navigation();
+				<?php get_template_part( 'no-results', 'search' ); ?>
 
-		else :
+			<?php endif; ?>
 
-			get_template_part( 'template-parts/content', 'none' );
-
-		endif; ?>
-
-		</main><!-- #main -->
-	</section><!-- #primary -->
-
-<?php
-get_sidebar();
-get_footer();
+<?php get_footer(); ?>
